@@ -1,12 +1,17 @@
-let resultsContainer = document.getElementsByClassName("container")[0]
+function debounce(func , delay){
+    let currentTimeOutValue;
 
-const validateInput = (el) => {
-    if(el.value === ""){
-        resultsContainer.innerHTML = "<p>Type something in the above search input</p>"
-    }else{
-        generateResults(el.value, el)
+    return function(...args){
+        clearTimeout(currentTimeOutValue);
+        currentTimeOutValue=setTimeout( () => {
+            func.apply(this, args);
+            // console.log("test debounce")
+        }, delay)
     }
 }
+
+
+let resultsContainer = document.getElementsByClassName("container")[0]
 
 const generateResults = (searchValue, inputField) => {
     fetch(
@@ -34,4 +39,15 @@ const generateResults = (searchValue, inputField) => {
             resultsContainer.innerHTML = "<p>Type something in the above search input</p>"
         }
     })
+}
+
+const searchDebounce = debounce((el) => generateResults(el.value, el) , 500);
+
+const validateInput = (el) => {
+    if(el.value === ""){
+        resultsContainer.innerHTML = "<p>Type something in the above search input</p>"
+    }else{
+        // generateResults(el.value, el)
+        searchDebounce(el);
+    }
 }
